@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.chatting"
+    namespace = "uz.abdurashidov.chatting"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "25.1.8937393"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -20,8 +20,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.chatting"
-        minSdk = flutter.minSdkVersion
+        applicationId = "uz.abdurashidov.chatting"
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -36,8 +36,8 @@ android {
 
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.5.1')
-
     implementation 'com.google.firebase:firebase-analytics'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
