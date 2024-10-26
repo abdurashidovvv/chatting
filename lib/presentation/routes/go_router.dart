@@ -1,6 +1,6 @@
 import 'package:chatting/presentation/screens/home_screen/home_screen.dart';
 import 'package:chatting/presentation/screens/onboarding_screen/onboarding_screen.dart';
-import 'package:chatting/presentation/screens/onboarding_screen/splash_screen.dart';
+import 'package:chatting/presentation/screens/splash_screen/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
