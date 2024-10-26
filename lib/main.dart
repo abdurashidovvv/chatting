@@ -1,3 +1,4 @@
+import 'package:chatting/presentation/routes/go_router.dart';
 import 'package:chatting/presentation/screens/auth_screen/auth_screen.dart';
 import 'package:chatting/presentation/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,14 +16,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: SplashScreen(),
+      routerConfig: router,
     );
   }
 }
