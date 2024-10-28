@@ -7,18 +7,22 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 1), () {
+    // Foydalanuvchi holatini tekshirish uchun bir oz vaqt kutish
+    Future.delayed(Duration(seconds: 2), () {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        context.go('/home');
+        context.go('/home'); // Foydalanuvchi kirgan bo‘lsa HomeScreen ga o‘tadi
       } else {
-        context.go('/onboarding');
+        context
+            .go('/auth'); // Foydalanuvchi kirmagan bo‘lsa AuthScreen ga o‘tadi
       }
     });
 
-    return const Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.white, // Splash ekranning foni
       body: Center(
-        child: Text("Splash Screen"),
+        child: Image.asset('assets/splash_icon.png',
+            width: 100, height: 100), // Splash ekranda ikonka
       ),
     );
   }
