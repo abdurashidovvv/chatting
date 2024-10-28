@@ -1,5 +1,7 @@
+import 'package:chatting/presentation/routes/go_router.dart';
 import 'package:chatting/presentation/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -45,7 +47,9 @@ class OnboardingScreen extends StatelessWidget {
                   borderRadius: const BorderRadius.all(Radius.circular(15)),
                   color: mainButtonColor),
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.go('/auth');
+                  },
                   child: const Text(
                     "Get Started",
                     style: TextStyle(

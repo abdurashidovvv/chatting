@@ -1,3 +1,4 @@
+import 'package:chatting/presentation/screens/auth_screen/auth_screen.dart';
 import 'package:chatting/presentation/screens/home_screen/home_screen.dart';
 import 'package:chatting/presentation/screens/onboarding_screen/onboarding_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ GoRouter router(String initialRoute) {
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
+      GoRoute(path: '/auth', builder: (context, state) => AuthScreen()),
       GoRoute(
         path: '/home',
         builder: (context, state) => const HomeScreen(),
