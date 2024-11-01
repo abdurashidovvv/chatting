@@ -6,7 +6,7 @@ class UserDataSaving extends UserDataState {}
 
 class UserDataSaved extends UserDataState {}
 
-class UserDataError {
+class UserDataError extends UserDataState {
   final String message;
   UserDataError(this.message);
 }
