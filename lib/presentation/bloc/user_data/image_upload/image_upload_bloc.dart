@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chatting/data/remote/firebase_storage_service.dart';
 import 'package:chatting/presentation/bloc/user_data/image_upload/image_upload_event.dart';
 import 'package:chatting/presentation/bloc/user_data/image_upload/image_upload_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +18,7 @@ class ImageUploadBloc extends Bloc<ImageUploadEvent, ImageUploadState> {
         final pickedFile = await _picker.pickImage(source: event.source);
         if (pickedFile != null) {
           _image = File(pickedFile.path);
-          String downloadUrl = await uploadImageToFirebase(_image!);
+          String downloadUrl = await _pickImageAndUpload(_image!);
           yield ImageUploaded(downloadUrl);
         } else {
           yield ImageUploadError("Rasm tanlanmadi");
@@ -28,9 +29,8 @@ class ImageUploadBloc extends Bloc<ImageUploadEvent, ImageUploadState> {
     }
   }
 
-  Future<String> uploadImageToFirebase(File image) async {
-    // Rasmni Firebase Storage ga yuklash jarayoni
-    // ...
-    return "downloadUrl"; // Rasm yuklangan URL
+  Future<String> _pickImageAndUpload(File image) async {
+    FirebaseStorageService storageService = FirebaseStorageService();
+    return await storageService.uploadImageToFirebase(image);
   }
 }
