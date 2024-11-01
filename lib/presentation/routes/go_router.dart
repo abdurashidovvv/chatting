@@ -12,7 +12,7 @@ GoRouter router(String initialRoute) {
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
-      GoRoute(path: '/auth', builder: (context, state) => AuthScreen()),
+      GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
       GoRoute(
           path: "/add_user_data",
           builder: (context, state) => const AddUserDataScreen()),

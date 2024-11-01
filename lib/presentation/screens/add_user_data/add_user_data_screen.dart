@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import 'package:chatting/presentation/bloc/user_data/user_data_bloc.dart';
 import 'package:chatting/presentation/bloc/user_data/user_data_event.dart';
 import 'package:chatting/presentation/bloc/user_data/user_data_state.dart';
-import 'package:chatting/presentation/routes/go_router.dart';
 import 'package:chatting/presentation/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AddUserDataScreen extends StatefulWidget {
   const AddUserDataScreen({super.key});

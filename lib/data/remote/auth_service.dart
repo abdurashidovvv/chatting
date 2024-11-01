@@ -22,7 +22,6 @@ class AuthService {
           await _auth.signInWithCredential(credential);
       return userCredential.user;
     } catch (e) {
-      print("Google bilan autentifikatsiyada xatolik: $e");
       return null;
     }
   }
@@ -35,7 +34,6 @@ class AuthService {
       );
       return userCredential.user;
     } catch (e) {
-      print("Email bilan autentifikatsiyada xatolik: $e");
       return null;
     }
   }
