@@ -1,6 +1,7 @@
 import 'package:chatting/data/remote/auth_service.dart';
 import 'package:chatting/presentation/bloc/auth/auth_bloc.dart';
 import 'package:chatting/presentation/routes/go_router.dart';
+import 'package:chatting/presentation/screens/add_user_data/add_user_data_screen.dart';
 import 'package:chatting/presentation/screens/auth_screen/auth_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,9 +26,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      routerConfig: router(direction),
+      home: AddUserDataScreen(),
     );
+    // return MaterialApp.router(
+    //   debugShowCheckedModeBanner: false,
+    //   routerConfig: router(direction),
+    // );
   }
 }
