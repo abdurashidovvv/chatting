@@ -1,3 +1,4 @@
+import 'package:chatting/presentation/screens/add_user_data/add_user_data_screen.dart';
 import 'package:chatting/presentation/screens/auth_screen/auth_screen.dart';
 import 'package:chatting/presentation/screens/home_screen/home_screen.dart';
 import 'package:chatting/presentation/screens/onboarding_screen/onboarding_screen.dart';
@@ -12,6 +13,9 @@ GoRouter router(String initialRoute) {
         builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(path: '/auth', builder: (context, state) => AuthScreen()),
+      GoRoute(
+          path: "/add_user_data",
+          builder: (context, state) => const AddUserDataScreen()),
       GoRoute(
         path: '/home',
         builder: (context, state) => const HomeScreen(),
