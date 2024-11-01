@@ -6,25 +6,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserDataBloc extends Bloc<UserDataEvent, UserDataState> {
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  UserDataBloc() : super(UserDataInitial());
+  UserDataBloc() : super(UserDataInitial()) {
+    on<SaveUserDataEvent>((event, emit) async {
+      emit(UserDataSaving());
+      await saveUserData(event, emit);
+    });
+  }
 
-  @override
-  Stream<UserDataState> mapEventToState(UserDataEvent event) async* {
-    if (event is SaveUserDataEvent) {
-      yield UserDataSaving();
-      try {
-        String userUID = _auth.currentUser?.uid ?? "";
-        await _databaseReference.child("users/$userUID").set({
-          "uid": event.userUID,
-          "firstName": event.firstName,
-          "lastName": event.lastName,
-        });
-        yield UserDataSaved();
-      } catch (e) {
-        yield UserDataError("Xatolik: $e");
-      }
+  Future<void> saveUserData(
+      SaveUserDataEvent event, Emitter<UserDataState> emit) async {
+    try {
+      // Firebase Authentication dan currentUserni olish
+      String userUID = FirebaseAuth.instance.currentUser!.uid;
+
+      // Foydalanuvchi ma'lumotlarini saqlash
+      await _databaseReference.child("users/$userUID").set({
+        "user_uid": event.userUID,
+        "firstName": event.firstName,
+        "lastName": event.lastName,
+      });
+
+      emit(UserDataSaved());
+    } catch (e) {
+      emit(UserDataError("Xatolik: $e"));
     }
   }
 }

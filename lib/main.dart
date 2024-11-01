@@ -1,7 +1,7 @@
 import 'package:chatting/data/remote/auth_service.dart';
 import 'package:chatting/presentation/bloc/auth/auth_bloc.dart';
+import 'package:chatting/presentation/bloc/user_data/user_data_bloc.dart';
 import 'package:chatting/presentation/routes/go_router.dart';
-import 'package:chatting/presentation/screens/add_user_data/add_user_data_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +13,19 @@ void main() async {
 
   final user = await FirebaseAuth.instance.authStateChanges().first;
   final initialRoute = user != null ? '/home' : '/onboarding';
-  runApp(BlocProvider(
-    create: (context) => AuthBloc(AuthService()),
-    child: MyApp(direction: initialRoute),
-  ));
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AuthBloc(AuthService()),
+        ),
+        BlocProvider(
+          create: (context) => UserDataBloc(),
+        ),
+      ],
+      child: MyApp(direction: initialRoute),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
