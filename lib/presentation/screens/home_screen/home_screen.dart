@@ -28,16 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: state.users.length,
                 itemBuilder: (context, index) {
                   final user = state.users[index];
-                  return ListTile(
-                    title: Text(user.firstName),
-                    subtitle: Text(user.lastName),
-                  );
+                  return UserItem(user: user);
                 },
               );
             } else if (state is UserError) {
               return Center(child: Text(state.message));
             }
-            return Center(child: const Text("No data"));
+            return Center(child: Text("No data"));
           },
         ),
       ),
