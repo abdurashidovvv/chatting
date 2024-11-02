@@ -11,7 +11,14 @@ class UserItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         print("User tapped!");
-        context.go('/messages');
+        context.go(
+          '/message',
+          extra: User(
+            uid: user.uid,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          ),
+        );
       },
       child: Container(
         width: MediaQuery.of(context).size.width,

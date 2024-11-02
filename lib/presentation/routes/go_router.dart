@@ -1,3 +1,4 @@
+import 'package:chatting/domain/models/user.dart';
 import 'package:chatting/presentation/screens/add_user_data/add_user_data_screen.dart';
 import 'package:chatting/presentation/screens/auth_screen/auth_screen.dart';
 import 'package:chatting/presentation/screens/home_screen/home_screen.dart';
@@ -22,8 +23,11 @@ GoRouter router(String initialRoute) {
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
-        path: '/messages',
-        builder: (context, state) => const MessageScreen(),
+        path: '/message',
+        builder: (context, state) {
+          final user = state.extra as User;
+          return MessageScreen(user: user);
+        },
       ),
     ],
   );
