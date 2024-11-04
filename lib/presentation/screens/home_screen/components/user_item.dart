@@ -20,17 +20,31 @@ class UserItem extends StatelessWidget {
           ),
         );
       },
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Image.asset('assets/images/google_ic.png', width: 50, height: 50),
-            Text(
-              user.firstName,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            )
-          ],
+        child: Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: const Color(0xFF771F98), width: 2),
+              borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.person_pin,
+                  size: 50,
+                  color: Color(0xFF771F98),
+                ),
+                const SizedBox(width: 20),
+                Text(
+                  user.firstName,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
