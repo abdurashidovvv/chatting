@@ -1,4 +1,3 @@
-import 'package:chatting/domain/models/user.dart';
 import 'package:chatting/presentation/bloc/users/user_bloc.dart';
 import 'package:chatting/presentation/bloc/users/user_event.dart';
 import 'package:chatting/presentation/bloc/users/user_state.dart';

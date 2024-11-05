@@ -1,6 +1,8 @@
 import 'package:chatting/data/remote/auth_service.dart';
 import 'package:chatting/presentation/bloc/auth/auth_bloc.dart';
+import 'package:chatting/presentation/bloc/message/message_bloc.dart';
 import 'package:chatting/presentation/bloc/user_data/user_data_bloc.dart';
+import 'package:chatting/presentation/bloc/users/user_bloc.dart';
 import 'package:chatting/presentation/routes/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +24,10 @@ void main() async {
         BlocProvider(
           create: (context) => UserDataBloc(),
         ),
+        BlocProvider(create: (context) => UserBloc()),
+        BlocProvider(
+          create: (context) => MessageBloc(),
+        )
       ],
       child: MyApp(direction: initialRoute),
     ),

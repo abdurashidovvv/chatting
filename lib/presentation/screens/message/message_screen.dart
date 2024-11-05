@@ -1,8 +1,13 @@
-import 'package:chatting/domain/models/user.dart';
+import 'package:chatting/domain/models/message.dart';
+import 'package:chatting/domain/models/user.dart' as AppUser;
+import 'package:chatting/presentation/bloc/message/message_bloc.dart';
+import 'package:chatting/presentation/bloc/message/message_event.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MessageScreen extends StatefulWidget {
-  final User user;
+  final AppUser.User user;
   const MessageScreen({super.key, required this.user});
 
   @override
@@ -95,7 +100,19 @@ class _MessageScreenState extends State<MessageScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    // Send Message
+                    BlocProvider.of<MessageBloc>(context).add(
+                      SendMessageEvent(
+                        receiverUserUid: widget.user.uid,
+                        message: Message(
+                            message: _messageController.text,
+                            timestamp: DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString(),
+                            senderId: FirebaseAuth.instance.currentUser!.uid,
+                            receiverId: widget.user.uid),
+                      ),
+                    );
+                    _messageController.clear();
                   },
                   icon: const Icon(
                     Icons.send_rounded,
