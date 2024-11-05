@@ -1,50 +1,63 @@
-import 'package:chatting/domain/models/message.dart';
-import 'package:chatting/presentation/bloc/message/message_event.dart';
-import 'package:chatting/presentation/bloc/message/message_state.dart';
+import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/models/message.dart';
+import 'message_event.dart';
+import 'message_state.dart';
 
 class MessageBloc extends Bloc<MessageEvent, MessageState> {
   final DatabaseReference _databaseReference =
-      FirebaseDatabase.instance.ref().child('messages');
+  FirebaseDatabase.instance.ref().child('messages');
+
+  late final StreamSubscription<DatabaseEvent> _messagesSubscription;
 
   MessageBloc() : super(MessageInitialState()) {
-    on<FetchMessagesEvent>((event, emit) async {
-      emit(MessageLoading());
-      try {
-        final snapshot = await _databaseReference
-            .child('${event.currentUserId}/${event.receiverUserId}')
-            .get();
-
-        if (snapshot.exists) {
-          final data = snapshot.value as Map<dynamic, dynamic>;
-
-          final messages = data.entries.map((entry) {
-            final messageMap = Map<String, dynamic>.from(entry.value as Map);
-            return Message.fromMap(messageMap);
-          }).toList();
-
-          emit(MessageLoaded(messages));
-        } else {
-          emit(MessageError("No messages found"));
-        }
-      } catch (e) {
-        emit(MessageError("Error fetching messages: $e"));
-      }
+    on<FetchMessagesEvent>((event, emit) {
+      _initializeMessagesListener(event.currentUserId, event.receiverUserId);
     });
+
     on<SendMessageEvent>((event, emit) async {
       try {
         String messageId = DateTime.now().millisecondsSinceEpoch.toString();
-
         await _databaseReference
             .child(
-                '${event.message.senderId}/${event.message.receiverId}/$messageId')
+            '${event.message.senderId}/${event.message.receiverId}/$messageId')
             .set(event.message.toMap());
-
-        emit(MessageSent());
       } catch (e) {
         emit(MessageError("Error sending message: $e"));
       }
     });
+  }
+
+  void _initializeMessagesListener(String senderId, String receiverId) {
+    final path = 'messages/$senderId/$receiverId';
+    final reference = FirebaseDatabase.instance.ref().child(path);
+
+    _messagesSubscription = reference.onValue.listen((DatabaseEvent event) {
+      final snapshot = event.snapshot;
+
+      if (snapshot.exists && snapshot.value != null) {
+        final data = (snapshot.value as Map<dynamic, dynamic>)
+            .map((key, value) => MapEntry(key.toString(), value));
+
+        List<Message> messages = [];
+        data.forEach((messageId, messageContent) {
+          final messageMap = Map<String, dynamic>.from(messageContent);
+          messages.add(Message.fromMap(messageMap));
+        });
+
+        messages.sort((a, b) =>
+            int.parse(a.timestamp).compareTo(int.parse(b.timestamp)));
+        emit(MessageLoaded(messages));
+      } else {
+        emit(MessageError("No messages found"));
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _messagesSubscription.cancel();
+    return super.close();
   }
 }
