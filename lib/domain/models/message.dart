@@ -21,7 +21,7 @@ class Message {
 
   factory Message.fromMap(Map<String, dynamic> map) {
     return Message(
-      message: map['message'] as String,
+      message: map['content'] as String,
       timestamp: map['timestamp'] as String,
       senderId: map['senderId'] as String,
       receiverId: map['receiverId'] as String,

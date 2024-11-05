@@ -18,9 +18,12 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
 
         if (snapshot.exists) {
           final data = snapshot.value as Map<dynamic, dynamic>;
-          final messages = data.entries
-              .map((entry) => Message.fromMap(entry.value))
-              .toList();
+
+          final messages = data.entries.map((entry) {
+            final messageMap = Map<String, dynamic>.from(entry.value as Map);
+            return Message.fromMap(messageMap);
+          }).toList();
+
           emit(MessageLoaded(messages));
         } else {
           emit(MessageError("No messages found"));
@@ -29,7 +32,6 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
         emit(MessageError("Error fetching messages: $e"));
       }
     });
-
     on<SendMessageEvent>((event, emit) async {
       try {
         String messageId = DateTime.now().millisecondsSinceEpoch.toString();
