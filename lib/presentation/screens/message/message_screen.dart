@@ -6,6 +6,7 @@ import 'package:chatting/presentation/bloc/message/message_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class MessageScreen extends StatefulWidget {
   final AppUser.User user;
@@ -62,6 +63,12 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
+  String formatTimestamp(String timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp));
+    final formatter = DateFormat('HH:mm dd.MM');
+    return formatter.format(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,89 +79,80 @@ class _MessageScreenState extends State<MessageScreen> {
         ),
       ),
       body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
-          child: BlocBuilder<MessageBloc, MessageState>(
-            builder: (context, state) {
-              Widget messageList;
-
-              if (state is MessageLoading) {
-                messageList = const Center(child: CircularProgressIndicator());
-              } else if (state is MessageLoaded && state.messages.isNotEmpty) {
-                messageList = ListView.builder(
-                  controller: _scrollController,
-                  itemCount: state.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = state.messages[index];
-                    return ListTile(
-                      title: Text(message.message),
-                      subtitle: Text(message.timestamp), // Format as needed
-                    );
-                  },
-                );
-              } else if (state is MessageError) {
-                messageList = Center(child: Text(state.message));
-              } else {
-                messageList =
-                    const Center(child: Text("No messages available."));
-              }
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: messageList),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          focusNode: _focusNode,
-                          decoration: InputDecoration(
-                            hintText: 'Enter your message',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                  color: Colors.blue, width: 2),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+        child: BlocBuilder<MessageBloc, MessageState>(
+          builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount:
+                        state is MessageLoaded ? state.messages.length : 0,
+                    itemBuilder: (context, index) {
+                      if (state is MessageLoaded) {
+                        final message = state.messages[index];
+                        return ListTile(
+                          title: Text(message.message),
+                          subtitle: Text(formatTimestamp(message.timestamp)),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _messageController,
+                        focusNode: _focusNode,
+                        decoration: InputDecoration(
+                          hintText: 'Enter your message',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide:
+                                const BorderSide(color: Colors.blue, width: 2),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () {
-                          if (_messageController.text.isNotEmpty) {
-                            BlocProvider.of<MessageBloc>(context).add(
-                              SendMessageEvent(
-                                receiverUserUid: widget.user.uid,
-                                message: Message(
-                                  message: _messageController.text,
-                                  timestamp: DateTime.now()
-                                      .millisecondsSinceEpoch
-                                      .toString(),
-                                  senderId:
-                                      FirebaseAuth.instance.currentUser!.uid,
-                                  receiverId: widget.user.uid,
-                                ),
-                              ),
-                            );
-                            _messageController.clear();
-                            _scrollToBottom();
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.send_rounded,
-                          color: Color(0xFF771F98),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              );
-            },
-          )),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        BlocProvider.of<MessageBloc>(context).add(
+                          SendMessageEvent(
+                            receiverUserUid: widget.user.uid,
+                            message: Message(
+                                message: _messageController.text,
+                                timestamp: DateTime.now()
+                                    .millisecondsSinceEpoch
+                                    .toString(),
+                                senderId:
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                receiverId: widget.user.uid),
+                          ),
+                        );
+                        _messageController.clear();
+                        _scrollToBottom(); // Scroll to bottom after sending message
+                      },
+                      icon: const Icon(
+                        Icons.send_rounded,
+                        color: Color(0xFF771F98),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }
