@@ -3,6 +3,7 @@ import 'package:chatting/domain/models/user.dart' as AppUser;
 import 'package:chatting/presentation/bloc/message/message_bloc.dart';
 import 'package:chatting/presentation/bloc/message/message_event.dart';
 import 'package:chatting/presentation/bloc/message/message_state.dart';
+import 'package:chatting/presentation/screens/message/components/message_item.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -101,10 +102,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       itemCount: state.messages.length,
                       itemBuilder: (context, index) {
                         final message = state.messages[index];
-                        return ListTile(
-                          title: Text(message.message, style: const TextStyle(color: Colors.black)),
-                          subtitle: Text(formatTimestamp(message.timestamp)),
-                        );
+                        return MessageItem(message: message);
                       },
                     );
                   } else if (state is MessageError) {
