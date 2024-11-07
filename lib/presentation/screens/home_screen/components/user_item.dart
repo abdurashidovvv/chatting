@@ -12,7 +12,7 @@ class UserItem extends StatelessWidget {
       onTap: () {
         print("User tapped!");
         context.go(
-          '/message',
+          '/home/message',
           extra: User(
             uid: user.uid,
             firstName: user.firstName,

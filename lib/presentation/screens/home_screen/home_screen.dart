@@ -14,11 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<bool> _onWillPop() async {
-    // Agar home_screenga qaytmoqchi bo'lsangiz:
-    context.go('/home'); // '/home' - bu sizning HomeScreen yo'lingiz
-    return false; // SystemNavigator.back() ni bloklaydi
-  }
+
 
   @override
   Widget build(BuildContext context) {

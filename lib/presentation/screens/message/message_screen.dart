@@ -7,10 +7,12 @@ import 'package:chatting/presentation/screens/message/components/message_item.da
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class MessageScreen extends StatefulWidget {
   final AppUser.User user;
+
   const MessageScreen({super.key, required this.user});
 
   @override
@@ -82,82 +84,89 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.user.firstName,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return WillPopScope(
+      onWillPop: () async {
+        context.go('/home');
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            widget.user.firstName,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: BlocBuilder<MessageBloc, MessageState>(
-                builder: (context, state) {
-                  if (state is MessageLoaded) {
-                    return ListView.builder(
-                      controller: _scrollController,
-                      itemCount: state.messages.length,
-                      itemBuilder: (context, index) {
-                        final message = state.messages[index];
-                        return MessageItem(message: message);
-                      },
-                    );
-                  } else if (state is MessageError) {
-                    return const Center(child: Text("Something went wrong"));
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 6.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: BlocBuilder<MessageBloc, MessageState>(
+                  builder: (context, state) {
+                    if (state is MessageLoaded) {
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: state.messages.length,
+                        itemBuilder: (context, index) {
+                          final message = state.messages[index];
+                          return MessageItem(message: message);
+                        },
+                      );
+                    } else if (state is MessageError) {
+                      return const Center(child: Text("Something went wrong"));
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
               ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    focusNode: _focusNode,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your message',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      focusNode: _focusNode,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your message',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                              const BorderSide(color: Colors.blue, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Colors.blue, width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    BlocProvider.of<MessageBloc>(context).add(
-                      SendMessageEvent(
-                        receiverUserUid: widget.user.uid,
-                        message: Message(
-                            message: _messageController.text,
-                            timestamp: DateTime.now()
-                                .millisecondsSinceEpoch
-                                .toString(),
-                            senderId: FirebaseAuth.instance.currentUser!.uid,
-                            receiverId: widget.user.uid),
-                      ),
-                    );
-                    _messageController.clear();
-                    _scrollToBottom(); // Scroll to bottom after sending message
-                  },
-                  icon: const Icon(
-                    Icons.send_rounded,
-                    color: Color(0xFF771F98),
-                  ),
-                )
-              ],
-            ),
-          ],
+                  IconButton(
+                    onPressed: () {
+                      BlocProvider.of<MessageBloc>(context).add(
+                        SendMessageEvent(
+                          receiverUserUid: widget.user.uid,
+                          message: Message(
+                              message: _messageController.text,
+                              timestamp: DateTime.now()
+                                  .millisecondsSinceEpoch
+                                  .toString(),
+                              senderId: FirebaseAuth.instance.currentUser!.uid,
+                              receiverId: widget.user.uid),
+                        ),
+                      );
+                      _messageController.clear();
+                      _scrollToBottom(); // Scroll to bottom after sending message
+                    },
+                    icon: const Icon(
+                      Icons.send_rounded,
+                      color: Color(0xFF771F98),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

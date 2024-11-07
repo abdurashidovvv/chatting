@@ -18,16 +18,19 @@ GoRouter router(String initialRoute) {
       GoRoute(
           path: "/add_user_data",
           builder: (context, state) => const AddUserDataScreen()),
+
       GoRoute(
         path: '/home',
         builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: '/message',
-        builder: (context, state) {
-          final user = state.extra as User;
-          return MessageScreen(user: user);
-        },
+        routes: [
+          GoRoute(
+            path: 'message',
+            builder: (context, state) {
+              final user = state.extra as User;
+              return MessageScreen(user: user);
+            },
+          ),
+        ],
       ),
     ],
   );
