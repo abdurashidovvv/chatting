@@ -151,6 +151,9 @@ class _MessageScreenState extends State<MessageScreen> {
                           SendMessageEvent(
                             receiverUserUid: widget.user.uid,
                             message: Message(
+                                messageId: DateTime.now()
+                                    .millisecondsSinceEpoch
+                                    .toString(),
                                 message: _messageController.text,
                                 timestamp: DateTime.now()
                                     .millisecondsSinceEpoch

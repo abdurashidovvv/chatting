@@ -7,7 +7,7 @@ import 'message_state.dart';
 
 class MessageBloc extends Bloc<MessageEvent, MessageState> {
   final DatabaseReference _databaseReference =
-  FirebaseDatabase.instance.ref().child('messages');
+      FirebaseDatabase.instance.ref().child('messages');
 
   late final StreamSubscription<DatabaseEvent> _messagesSubscription;
 
@@ -18,15 +18,29 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
 
     on<SendMessageEvent>((event, emit) async {
       try {
-        String messageId = DateTime.now().millisecondsSinceEpoch.toString();
         await _databaseReference
             .child(
-            '${event.message.senderId}/${event.message.receiverId}/$messageId')
+                '${event.message.senderId}/${event.message.receiverId}/${event.message.messageId}')
             .set(event.message.toMap());
       } catch (e) {
         emit(MessageError("Error sending message: $e"));
       }
     });
+
+    on<DeleteMessageEvent>(
+      (event, emit) async {
+        try {
+          emit(MessageLoading());
+          await _databaseReference
+              .child(
+                  '${event.currentUserId}/${event.receiverUserId}/${event.messageId}')
+              .remove();
+          emit(MessageDeleted());
+        } catch (e) {
+          emit(MessageError("Error deleting message: $e"));
+        }
+      },
+    );
   }
 
   void _initializeMessagesListener(String senderId, String receiverId) {
@@ -46,8 +60,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
           messages.add(Message.fromMap(messageMap));
         });
 
-        messages.sort((a, b) =>
-            int.parse(a.timestamp).compareTo(int.parse(b.timestamp)));
+        messages.sort(
+            (a, b) => int.parse(a.timestamp).compareTo(int.parse(b.timestamp)));
         emit(MessageLoaded(messages));
       } else {
         emit(MessageError("No messages found"));

@@ -1,10 +1,12 @@
 class Message {
+  final String messageId;
   final String message;
   final String timestamp;
   final String senderId;
   final String receiverId;
 
   Message({
+    required this.messageId,
     required this.message,
     required this.timestamp,
     required this.senderId,
@@ -13,6 +15,7 @@ class Message {
 
   Map<String, dynamic> toMap() {
     return {
+      'message_id': messageId,
       'content': message,
       'timestamp': timestamp,
       'senderId': senderId,
@@ -22,7 +25,8 @@ class Message {
 
   factory Message.fromMap(Map<String, dynamic> map) {
     return Message(
-      message: map['content'] as String? ?? '', // Default to empty string if null
+      messageId: map['message_id'] as String ?? '',
+      message: map['content'] as String? ?? '',
       timestamp: map['timestamp'] as String? ?? '',
       senderId: map['senderId'] as String? ?? '',
       receiverId: map['receiverId'] as String? ?? '',

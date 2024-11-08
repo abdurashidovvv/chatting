@@ -16,3 +16,15 @@ class FetchMessagesEvent extends MessageEvent {
   FetchMessagesEvent(
       {required this.currentUserId, required this.receiverUserId});
 }
+
+class DeleteMessageEvent extends MessageEvent {
+  final String currentUserId;
+  final String receiverUserId;
+  final String messageId;
+
+  DeleteMessageEvent({
+    required this.currentUserId,
+    required this.receiverUserId,
+    required this.messageId,
+  });
+}

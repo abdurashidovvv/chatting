@@ -20,3 +20,6 @@ class MessageError extends MessageState {
 }
 
 class MessageSent extends MessageState {}
+
+
+class MessageDeleted extends MessageState {}
