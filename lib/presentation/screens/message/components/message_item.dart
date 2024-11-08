@@ -9,8 +9,9 @@ import '../../../bloc/message/message_event.dart';
 
 class MessageItem extends StatelessWidget {
   final Message message;
+  final GlobalKey _messageKey = GlobalKey();
 
-  const MessageItem({super.key, required this.message});
+  MessageItem({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +19,10 @@ class MessageItem extends StatelessWidget {
 
     return GestureDetector(
       onLongPress: () {
-        _showContextMenu(context);
+        _showPopupMenu(context);
       },
       child: Container(
+        key: _messageKey, // Assign the GlobalKey here
         margin: const EdgeInsets.symmetric(vertical: 4.0),
         alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
@@ -64,45 +66,53 @@ class MessageItem extends StatelessWidget {
     );
   }
 
-  void _showContextMenu(BuildContext context) {
-    showDialog(
+  void _showPopupMenu(BuildContext context) async {
+    final RenderBox renderBox = _messageKey.currentContext?.findRenderObject() as RenderBox;
+    final Offset position = renderBox.localToGlobal(Offset.zero);
+
+    final bool isCurrentUser = message.senderId == FirebaseAuth.instance.currentUser?.uid;
+
+    await showMenu(
       context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text("Message Options"),
-          children: <Widget>[
-            SimpleDialogOption(
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: message.message));
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Message copied to clipboard")),
-                );
-              },
-              child: const Text("Copy Message"),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                // Delete message logic here
-                context.read<MessageBloc>().add(
-                  DeleteMessageEvent(
-                    currentUserId: message.senderId,
-                    receiverUserId: message.receiverId,
-                    messageId: message.messageId,
-                  ),
-                );
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Message deleted")),
-                );
-              },
-              child: const Text("Delete Message"),
-            ),
-          ],
-        );
-      },
+      position: RelativeRect.fromLTRB(
+        // Adjust the horizontal position to show the popup on the appropriate side
+        isCurrentUser ? position.dx + renderBox.size.width - 150 : position.dx,
+        position.dy + renderBox.size.height, // Position directly below the message
+        isCurrentUser ? position.dx : position.dx + renderBox.size.width - 150,
+        0,
+      ),
+      items: [
+        PopupMenuItem(
+          child: const Text("Copy Message"),
+          onTap: () {
+            Clipboard.setData(ClipboardData(text: message.message));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Message copied to clipboard")),
+            );
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("Delete Message"),
+          onTap: () {
+            context.read<MessageBloc>().add(
+              DeleteMessageEvent(
+                currentUserId: message.senderId,
+                receiverUserId: message.receiverId,
+                messageId: message.messageId,
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Message deleted")),
+            );
+          },
+        ),
+      ],
+      elevation: 8.0,
     );
   }
+
+
+
 
   String formatTimestamp(String timestamp) {
     try {
