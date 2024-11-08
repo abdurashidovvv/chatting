@@ -35,7 +35,11 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
               .child(
                   '${event.currentUserId}/${event.receiverUserId}/${event.messageId}')
               .remove();
-          emit(MessageDeleted());
+
+          add(FetchMessagesEvent(
+            currentUserId: event.currentUserId,
+            receiverUserId: event.receiverUserId,
+          ));
         } catch (e) {
           emit(MessageError("Error deleting message: $e"));
         }
