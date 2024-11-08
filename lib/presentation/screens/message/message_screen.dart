@@ -123,38 +123,44 @@ class _MessageScreenState extends State<MessageScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      focusNode: _focusNode,
-                      decoration: InputDecoration(
-                        hintText: 'Enter your message',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: TextField(
+                        controller: _messageController,
+                        focusNode: _focusNode,
+                        decoration: InputDecoration(
+                          hintText: 'Enter your message',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF771C98), width: 2),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              const BorderSide(color: Colors.blue, width: 2),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
                       ),
                     ),
                   ),
                   IconButton(
                     onPressed: () {
-                      BlocProvider.of<MessageBloc>(context).add(
-                        SendMessageEvent(
-                          receiverUserUid: widget.user.uid,
-                          message: Message(
-                              message: _messageController.text,
-                              timestamp: DateTime.now()
-                                  .millisecondsSinceEpoch
-                                  .toString(),
-                              senderId: FirebaseAuth.instance.currentUser!.uid,
-                              receiverId: widget.user.uid),
-                        ),
-                      );
+                      if (_messageController.text.isNotEmpty) {
+                        BlocProvider.of<MessageBloc>(context).add(
+                          SendMessageEvent(
+                            receiverUserUid: widget.user.uid,
+                            message: Message(
+                                message: _messageController.text,
+                                timestamp: DateTime.now()
+                                    .millisecondsSinceEpoch
+                                    .toString(),
+                                senderId:
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                receiverId: widget.user.uid),
+                          ),
+                        );
+                      }
                       _messageController.clear();
                       _scrollToBottom(); // Scroll to bottom after sending message
                     },

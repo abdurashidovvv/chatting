@@ -18,7 +18,7 @@ class MessageItem extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         decoration: BoxDecoration(
-          color: isCurrentUser ? Colors.blueAccent : Colors.grey[200],
+          color: isCurrentUser ? const Color(0xFF771C98) : Colors.grey[200],
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(12),
             topRight: const Radius.circular(12),

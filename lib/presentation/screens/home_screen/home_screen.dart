@@ -2,9 +2,11 @@ import 'package:chatting/presentation/bloc/users/user_bloc.dart';
 import 'package:chatting/presentation/bloc/users/user_event.dart';
 import 'package:chatting/presentation/bloc/users/user_state.dart';
 import 'package:chatting/presentation/screens/home_screen/components/user_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,8 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,14 +24,19 @@ class _HomeScreenState extends State<HomeScreen> {
           "Users",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: Icon(
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              GoogleSignIn().signOut();
+              print(FirebaseAuth.instance.currentUser?.email);
+              context.go("/onboarding");
+            },
+            icon: const Icon(
               Icons.logout,
               color: Color(0xFF771F98),
             ),
-          )
+          ),
         ],
       ),
       body: BlocProvider(
